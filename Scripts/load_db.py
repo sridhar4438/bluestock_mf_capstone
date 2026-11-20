@@ -10,8 +10,11 @@ SCHEMA = BASE_DIR / "SQL" / "schema.sql"
 DB_DIR.mkdir(parents=True, exist_ok=True)
 db_path = DB_DIR / "bluestock_mf.db"
 if db_path.exists():
-    db_path.unlink()          # start fresh every time
-
+    try:
+        db_path.unlink()          # start fresh every time
+    except PermissionError:
+        raise SystemExit("The database is open in another program. "
+                         "Close Power BI and restart the notebook kernel, then re-run.")
 # table name, csv file, columns that hold dates
 tables = [
     ("dim_fund",              "clean_fund_master.csv",      ["launch_date"]),
